@@ -173,7 +173,7 @@ await redis.ltrim(`doc:${documentId}:messages`, 0, 100); // Keep last 100 messag
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the LICENSE file for details
 
 ---
 
