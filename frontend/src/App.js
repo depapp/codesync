@@ -51,7 +51,7 @@ function App() {
     return () => {
       socketService.disconnect();
     };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleConnectionStatus = ({ connected }) => {
     setIsConnected(connected);

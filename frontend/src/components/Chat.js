@@ -36,13 +36,6 @@ const Chat = ({ messages, currentUser, onSendMessage, onClose }) => {
     }
   };
 
-  const formatTime = (timestamp) => {
-    return new Date(timestamp).toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
   const formatDate = (timestamp) => {
     const date = new Date(timestamp);
     const today = new Date();

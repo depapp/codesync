@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import MonacoEditor from '@monaco-editor/react';
 
 const Editor = ({ document, users, currentUser, theme, onDocumentChange, onCursorChange }) => {
@@ -67,11 +67,92 @@ const Editor = ({ document, users, currentUser, theme, onDocumentChange, onCurso
     }
   }, [document?.content, isEditorReady]);
 
+  const updateCursorsAndSelections = useCallback(() => {
+    if (!editorRef.current || !currentUser) return;
+
+    const editor = editorRef.current;
+    const monaco = editor.getModel().constructor.monaco || window.monaco;
+
+    // Clear existing decorations
+    Object.values(cursors).forEach(decoration => {
+      if (decoration) {
+        editor.deltaDecorations([decoration], []);
+      }
+    });
+
+    Object.values(selections).forEach(decoration => {
+      if (decoration) {
+        editor.deltaDecorations([decoration], []);
+      }
+    });
+
+    const newCursors = {};
+    const newSelections = {};
+
+    // Add cursors and selections for other users
+    Object.values(users).forEach(user => {
+      if (user.id === currentUser.id) return;
+
+      if (user.cursor) {
+        // Add cursor decoration
+        const cursorDecoration = {
+          range: new monaco.Range(
+            user.cursor.lineNumber,
+            user.cursor.column,
+            user.cursor.lineNumber,
+            user.cursor.column
+          ),
+          options: {
+            className: 'cursor-indicator',
+            stickiness: monaco.editor.TrackedRangeStickiness.NeverGrowsWhenTypingAtEdges,
+            beforeContentClassName: 'cursor-before',
+            afterContentClassName: 'cursor-after',
+            glyphMarginClassName: 'cursor-glyph',
+            overviewRuler: {
+              color: user.color,
+              position: monaco.editor.OverviewRulerLane.Full
+            }
+          }
+        };
+
+        const cursorDecorationIds = editor.deltaDecorations([], [cursorDecoration]);
+        newCursors[user.id] = cursorDecorationIds[0];
+
+        // Add selection decoration if user has selection
+        if (user.selection && !user.selection.isEmpty()) {
+          const selectionDecoration = {
+            range: new monaco.Range(
+              user.selection.startLineNumber,
+              user.selection.startColumn,
+              user.selection.endLineNumber,
+              user.selection.endColumn
+            ),
+            options: {
+              className: 'selection-highlight',
+              stickiness: monaco.editor.TrackedRangeStickiness.NeverGrowsWhenTypingAtEdges,
+              backgroundColor: user.color + '40', // Add transparency
+              overviewRuler: {
+                color: user.color,
+                position: monaco.editor.OverviewRulerLane.Center
+              }
+            }
+          };
+
+          const selectionDecorationIds = editor.deltaDecorations([], [selectionDecoration]);
+          newSelections[user.id] = selectionDecorationIds[0];
+        }
+      }
+    });
+
+    setCursors(newCursors);
+    setSelections(newSelections);
+  }, [users, currentUser, cursors, selections]);
+
   useEffect(() => {
     if (isEditorReady && editorRef.current) {
       updateCursorsAndSelections();
     }
-  }, [users, isEditorReady]);
+  }, [users, isEditorReady, updateCursorsAndSelections]);
 
   const handleEditorDidMount = (editor, monaco) => {
     editorRef.current = editor;
@@ -154,87 +235,6 @@ const Editor = ({ document, users, currentUser, theme, onDocumentChange, onCurso
 
     // Focus the editor
     editor.focus();
-  };
-
-  const updateCursorsAndSelections = () => {
-    if (!editorRef.current || !currentUser) return;
-
-    const editor = editorRef.current;
-    const monaco = editor.getModel().constructor.monaco || window.monaco;
-
-    // Clear existing decorations
-    Object.values(cursors).forEach(decoration => {
-      if (decoration) {
-        editor.deltaDecorations([decoration], []);
-      }
-    });
-
-    Object.values(selections).forEach(decoration => {
-      if (decoration) {
-        editor.deltaDecorations([decoration], []);
-      }
-    });
-
-    const newCursors = {};
-    const newSelections = {};
-
-    // Add cursors and selections for other users
-    Object.values(users).forEach(user => {
-      if (user.id === currentUser.id) return;
-
-      if (user.cursor) {
-        // Add cursor decoration
-        const cursorDecoration = {
-          range: new monaco.Range(
-            user.cursor.lineNumber,
-            user.cursor.column,
-            user.cursor.lineNumber,
-            user.cursor.column
-          ),
-          options: {
-            className: 'cursor-indicator',
-            stickiness: monaco.editor.TrackedRangeStickiness.NeverGrowsWhenTypingAtEdges,
-            beforeContentClassName: 'cursor-before',
-            afterContentClassName: 'cursor-after',
-            glyphMarginClassName: 'cursor-glyph',
-            overviewRuler: {
-              color: user.color,
-              position: monaco.editor.OverviewRulerLane.Full
-            }
-          }
-        };
-
-        const cursorDecorationIds = editor.deltaDecorations([], [cursorDecoration]);
-        newCursors[user.id] = cursorDecorationIds[0];
-
-        // Add selection decoration if user has selection
-        if (user.selection && !user.selection.isEmpty()) {
-          const selectionDecoration = {
-            range: new monaco.Range(
-              user.selection.startLineNumber,
-              user.selection.startColumn,
-              user.selection.endLineNumber,
-              user.selection.endColumn
-            ),
-            options: {
-              className: 'selection-highlight',
-              stickiness: monaco.editor.TrackedRangeStickiness.NeverGrowsWhenTypingAtEdges,
-              backgroundColor: user.color + '40', // Add transparency
-              overviewRuler: {
-                color: user.color,
-                position: monaco.editor.OverviewRulerLane.Center
-              }
-            }
-          };
-
-          const selectionDecorationIds = editor.deltaDecorations([], [selectionDecoration]);
-          newSelections[user.id] = selectionDecorationIds[0];
-        }
-      }
-    });
-
-    setCursors(newCursors);
-    setSelections(newSelections);
   };
 
   const getLanguageFromContent = (content) => {
