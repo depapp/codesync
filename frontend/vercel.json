@@ -20,9 +20,5 @@
       "src": "/(.*)",
       "dest": "/index.html"
     }
-  ],
-  "env": {
-    "REACT_APP_API_URL": "@react_app_api_url",
-    "REACT_APP_WS_URL": "@react_app_ws_url"
-  }
+  ]
 }
