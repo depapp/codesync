@@ -1,0 +1,160 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom scrollbar styles */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Dark theme scrollbar */
+.dark ::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Custom cursor styles for collaborative editing */
+.cursor-indicator {
+  position: absolute;
+  width: 2px;
+  height: 20px;
+  pointer-events: none;
+  z-index: 1000;
+  animation: blink 1s infinite;
+}
+
+.cursor-indicator::after {
+  content: attr(data-user);
+  position: absolute;
+  top: -25px;
+  left: 0;
+  background: inherit;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* Selection styles for collaborative editing */
+.selection-highlight {
+  position: absolute;
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0.3;
+}
+
+/* Monaco editor custom styles */
+.monaco-editor {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
+}
+
+/* Chat message animations */
+.chat-message {
+  animation: slideUp 0.3s ease-out;
+}
+
+/* User presence indicator */
+.user-indicator {
+  position: relative;
+}
+
+.user-indicator::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background: #10b981;
+  border: 2px solid white;
+  border-radius: 50%;
+  animation: pulse-slow 2s infinite;
+}
+
+/* Loading spinner */
+.spinner {
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #3b82f6;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .cursor-indicator,
+  .chat-message,
+  .user-indicator::before,
+  .spinner {
+    animation: none;
+  }
+}
+
+/* Focus styles for better accessibility */
+button:focus,
+input:focus,
+textarea:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .cursor-indicator {
+    border: 1px solid currentColor;
+  }
+  
+  .selection-highlight {
+    opacity: 0.5;
+    border: 1px solid currentColor;
+  }
+}
+
+/* Print styles */
+@media print {
+  .sidebar,
+  .chat-panel,
+  .toolbar {
+    display: none !important;
+  }
+  
+  .editor-container {
+    width: 100% !important;
+    height: auto !important;
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "name": "codesync",
+  "version": "1.0.0",
+  "description": "Real-time collaborative code editor powered by Redis",
+  "main": "index.js",
+  "scripts": {
+    "install:all": "cd backend && npm install && cd ../frontend && npm install",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm start",
+    "start:backend": "cd backend && npm start",
+    "start:frontend": "cd frontend && npm start",
+    "build:frontend": "cd frontend && npm run build",
+    "deploy": "./deploy.sh",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/depapp/codesync.git"
+  },
+  "keywords": [
+    "redis",
+    "collaborative",
+    "editor",
+    "real-time",
+    "websocket",
+    "react",
+    "nodejs"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/depapp/codesync/issues"
+  },
+  "homepage": "https://github.com/depapp/codesync#readme",
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}
