@@ -1,5 +1,8 @@
 # CodeSync - Real-time Collaborative Code Editor
 
+## Full Explanation on DEV.to Article
+- https://dev.to/depapp/codesync-real-time-collaborative-code-editor-powered-by-redis-15h5
+
 ## ✨ Features
 
 ### Real-time Collaboration
